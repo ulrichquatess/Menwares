@@ -12,9 +12,25 @@
         </div>
       </div>
        <!-- Main Container -->
+       <!-- This part yere returns the success Message if product was added to the cart -->
+                @if(session()->has('success_message'))
+                 <div class="alert alert-success">
+                  {{ session()->get('success_message')}}
+                 </div>
+                 @endif
+
+                 @if(count($errors) > 0)
+                   <div class="alert alert-danger">
+                     <ul>
+                       @foreach($errors->all() as $error)
+                          <li>{{ $error }}</li>
+                       @endforeach
+                     </ul>
+                   </div>
+                 @endif  
+              <!-- End Of Success Message -->
       <div class="container">
         <div class="row">
-
           <!-- Filter Sidebar -->
           <div class="col-lg-3 col-md-4 mb-3">
             <div class="collapse d-md-block pt-3 pt-md-0" id="collapseFilter"> 
@@ -39,31 +55,12 @@
               <div class="row">
                 <div class="col-12 col-sm-6 col-md-12">
                   <div class="filter-sidebar">
-                    <div class="title"><span>Price Range</span></div>
-                    <div class="input-group input-group-sm mb-3">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">Min : $</span>
-                      </div>
-                      <input type="text" class="form-control" name="min-price" id="min-price" value="" />
-                      <div class="input-group-append input-group-prepend">
-                        <span class="input-group-text">Max : $</span>
-                      </div>
-                      <input type="text" class="form-control" name="max-price" id="max-price" value="" />
-                    </div>
-                    <div class="price-range">
-                      <div id="price"></div>
-                    </div>
+                    
+                    
                   </div>
                 </div>
                 <div class="col-12 col-sm-6 col-md-12">
-                  <div class="filter-sidebar">
-                    <div class="title"><span>Rating</span></div>
-                    <div class="rating-range">
-                      <div id="rating-range"></div>
-                    </div>
-                    <input type="hidden" class="form-control" name="min-range" id="min-range" value="1" />
-                    <input type="hidden" class="form-control" name="max-range" id="max-range" value="5" />
-                  </div>
+                
                 </div>
               </div>
             </div>
@@ -101,11 +98,18 @@
                   <div class="img-wrapper">
                     <a href="{{ url('singleproduct/'.$product->slug)}}"><img class="card-img-top" src="{{ productImage($product->image) }}" alt="Card image cap"></a>
                     <div class="tools tools-bottom" data-animate-in="fadeInUp" data-animate-out="fadeOutDown">
+                      <form action="{{ route('cart.store')}}" method="POST">
+                      {{ csrf_field() }}
+                      <input type="hidden" name="id" value="{{ $product->id }}">
+                      <input type="hidden" name="name" value="{{ $product->name }}">
+                      <input type="hidden" name="price" value="{{ $product->price }}">
+                      <input type="hidden" name="size" value="{{ $product->size }}">
                       <div class="btn-group" role="group" aria-label="card-product-tools">
-                        <button class="btn btn-link btn-sm d-none d-md-inline-block quick-view"><i class="fa fa-search-plus"></i></button>
+                        <button class="btn btn-link btn-sm d-none d-md-inline-block quick-view"></button>
                         <button class="btn btn-link btn-sm">Add to Cart</button>
-                        <button class="btn btn-link btn-sm d-none d-md-inline-block"><i class="fa fa-heart"></i></button>
+                        <button class="btn btn-link btn-sm d-none d-md-inline-block"></button>
                       </div>
+                    </form>
                     </div>
                     <span class="badge badge-info custom-badge arrowed-left label label-top-right">New Arrival</span>
                   </div>

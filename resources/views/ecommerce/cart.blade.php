@@ -55,10 +55,10 @@
                     <div class="media">
                       <a href="{{ url('singleproduct/'.$item->model->slug)}}" class="mr-2 d-none d-md-block"><img src="{{ productImage($item->model->image) }}" class="img-thumbnail" alt="product"></a>
                       <div class="media-body">
-                        <a href="{{ url('singleproduct/'.$item->model->slug)}}" class="mt-0 text-default font-weight-bold"><u>{{ $item->model->name }}</u></a>
+                        <a href="{{ url('singleproduct/'.$item->slug)}}" class="mt-0 text-default font-weight-bold"><u>{{ $item->model->name }}</u></a>
                         <div>Size: {{ $item->model->size }}<span class="mx-2">|</span> Color: Gray</div>
                         <div class="mb-2">
-                          <span class="d-inline d-sm-none">Price: <span class="price">{{ $item->model->presentPrice() }}</span></span>
+                          <span class="d-inline d-sm-none">Price: <span class="price"></span></span>
                           <span class="badge badge-success custom-badge arrowed-right">In stock</span>
                         </div>
                          <form action="{{ route('cart.save', $item->rowId) }}" method="POST">
@@ -87,11 +87,11 @@
                     </select>
                     </div>
                     <div class="d-block d-sm-none">
-                      Subtotal <div class="price">{{ presentPrice($item->subtotal) }}</div>
+                      Subtotal <div class="price">{{ $item->model->presentPrice() }}</div>
                     </div>
                   </td>
                   <td class="d-none d-sm-table-cell">
-                    <span class="price">{{ presentPrice($item->subtotal) }}</span> <del class="text-muted">$15.00</del>
+                    <span class="price">{{ $item->model->presentPrice() }}</span> 
                   </td>
                 </tr>
                 @endforeach
@@ -110,8 +110,12 @@
           </div>
           <div class="col-12 col-md-6 col-lg-5 col-xl-4">
             <div class="d-flex">
-              <div>Big Tax</div>
-              <div class="ml-auto font-weight-bold">{{ Cart::tax() }}</div>
+              <div>Subtotal</div>
+              <div class="ml-auto font-weight-bold">{{ presentPrice(Cart::subtotal()) }}</div>
+            </div>
+            <div class="d-flex">
+              <div>Tax</div>
+              <div class="ml-auto font-weight-bold">{{ presentPrice(Cart::tax()) }}</div>
             </div>
             <hr class="my-1">
             <div class="d-flex">
@@ -125,7 +129,7 @@
             <hr>
             <div class="d-flex">
               <div>Order Total</div>
-              <div class="ml-auto price h5 mb-0">{{ Cart::total() }}</div>
+              <div class="ml-auto price h5 mb-0">{{ presentPrice(Cart::total()) }}</div>
             </div>
             <hr>
           </div>
@@ -137,8 +141,14 @@
           </div>
         </div>
          @else
-         	<div class="title"><span>No Item Is Found On the Cart!</span></div>
-         	<a href="{{ route('product.index')}}" class="d-none d-sm-inline-block btn btn-outline-theme">Continue Shopping</a>
+         	<div class="row p-5">
+          <div class="col text-center">
+            <h1><i class="fa fa-shopping-bag"></i></h1>
+            <h1 class="roboto-condensed" add-class-on-xs="h2">Your shopping cart is currently empty</h1>
+            <p>Add products to it. Check out our wide range of products!</p>
+            <a href="{{ route('product.index')}}" role="button" class="btn btn-outline-theme"><i class="fa fa-shopping-cart"></i> SHOP NOW</a>
+          </div>
+        </div>
          @endif
 
         @if(Cart::instance('saveForLater')->count() > 0)

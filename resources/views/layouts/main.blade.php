@@ -25,13 +25,21 @@
   </head>
   <body>
 
+    <?php
+      $settings = App\Social::findorFail(1);
+      $categories = App\Category::all();
+      $slug = App\Category::all();
+    ?>
+
     <!-- Offcanvas Menu -->
     <nav class="offcanvas">
       <div class="offcanvas-content">
         <div id="list-menu" class="list-menu list-group" data-children=".sub-menu1">
-          <a href="index.html"><i class="fa fa-fw fa-home"></i> Home</a>
-          <a href="products.html"><i class="fa fa-fw fa-tags"></i> Product List</a>
-          <a href="cart.html"><i class="fa fa-fw fa-shopping-cart"></i> Shopping Cart <span class="badge badge-secondary badge-pill float-right mt-1">4</span></a>
+          <a href="/"><i class="fa fa-fw fa-home"></i> Home</a>
+          <a href="{{ route('product.index') }}"><i class="fa fa-fw fa-tags"></i> Product List</a>
+          @if(Cart::instance('default')->count() > 0)
+          <a href="/cart"><i class="fa fa-fw fa-shopping-cart"></i> Shopping Cart <span class="badge badge-secondary badge-pill float-right mt-1">{{ Cart::instance('default')->count() }}</span></a>
+          @endif
           <a href="/checkout"><i class="fa fa-fw fa-check"></i> Checkout</a>
 
         </div>
@@ -47,24 +55,18 @@
           <div class="col">
             <div class="d-flex justify-content-between">
               <nav class="nav">
-                <a class="nav-item nav-link d-none d-sm-block" href="#"><i class="fa fa-question-circle"></i> Help</a>
-                <a class="nav-item nav-link d-none d-sm-block" href="#"><i class="fa fa-phone"></i> +123-456-789</a>
-                <a class="nav-item nav-link d-none d-sm-block" href="#"><i class="fa fa-apple"></i> Download App</a>
+                <a class="nav-item nav-link d-none d-sm-block" href="/contact"><i class="fa fa-question-circle"></i> Help</a>
+                <a class="nav-item nav-link d-none d-sm-block" href="/contact"><i class="fa fa-phone"></i>{{ $settings->phone }}</a>
               </nav>
               <ul class="nav">
-                <select class="select-dropdown-nav" data-width="95px">
-                  <option value="en" data-before='<img src="{{ asset('men/images/en.jpg')}} " class="align-baseline" /> '>English</option>
-                  <option value="fr" data-before='<img src="{{ asset('men/images/fr.jpg')}} " class="align-baseline" /> '>French</option>
-                </select>
-                <select class="select-dropdown-nav" data-width="70px">
-                  <option value="USD">$ USD</option>
-                  <option value="EUR">€ EUR</option>
-                </select>
                 <li class="nav-item d-none d-md-block">
-                  <a href="#" class="nav-link"><i class="fa fa-align-left"></i> Track Order</a>
+                  <a class="nav-link"><i class="fa fa-align-left"></i> English</a>
+                </li>
+                <li class="nav-item d-none d-md-block">
+                  <a class="nav-link"><i class="fa fa-align-left"></i> $ USD</a>
                 </li>
                 <li class="nav-item d-sm-none">
-                  <a href="#" class="nav-link" data-toggle="modal" data-target="#LoginModal"><i class="fa fa-sign-in"></i> Login</a>
+                  <a href="#" class="nav-link" data-toggle="modal" data-target="#LoginModal"><i class="fa fa-sign-in"></i> {{ route('login') }}</a>
                 </li>
               </ul>
             </div>
@@ -90,28 +92,20 @@
               <a href="/" class="d-none d-lg-flex mb-2 mb-lg-0"><img alt="Logo" src="{{ asset('men/images/logo-teal.png')}}" class="img-fluid"/></a>
             </div>
           </div>
-          <div class="col-8 col-sm-6 col-md-7 col-lg-6">
+          <div class="col-8 col-sm-6 col-md-7 col-lg-6" style="margin-top: 10px;">
+            <form action="{{ route('search') }}" method="GET" class="search-form">
+            {{ csrf_field() }}
             <div class="d-flex align-items-center h-100">
               <div class="input-group input-group-search">
-                <div class="input-group-prepend d-none d-md-flex">
-                  <select class="select-dropdown">
-                    <option value="all">All Categories</option>
-                    <option value="1">Dresses</option>
-                    <option value="2">Tops</option>
-                    <option value="3">Bottoms</option>
-                    <option value="4">Jackets / Coats</option>
-                    <option value="5">Sweaters</option>
-                    <option value="6">Gym Wear</option>
-                    <option value="7">Others</option>
-                  </select>
-                </div>
-                <input type="text" class="form-control" placeholder="Search here..." aria-label="Search here...">
+                <input type="text" name="query" id="query" value="{{ request()->input('query') }}" class="form-control" placeholder="Search here..." aria-label="Search here...">
                 <span class="input-group-append">
                   <button class="btn btn-theme btn-search" type="button"><i class="fa fa-search"></i></button>
                 </span>
               </div>
             </div>
+          </form>
           </div>
+
           <div class="col-4 col-sm-4 col-md-3 col-lg-3 d-none d-sm-block">
             <div class="d-flex align-items-center h-100 float-right abg-secondary">
               <div class="btn-group btn-group-sm mr-3" role="group" aria-label="Login Sign Up">
@@ -138,21 +132,6 @@
                             </li>
                         @endif
               </div>
-              <div class="navbar p-0 mr-3" hidden>
-                <div class="dropdown">
-                  <button class="btn btn-light active btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Hi, John Thor
-                  </button>
-                  <div class="dropdown-menu dropdown-menu-right smooth" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="account-order.html"><i class="fa fa-fw fa-shopping-bag"></i> Orders</a>
-                    <a class="dropdown-item" href="account-profile.html"><i class="fa fa-fw fa-user"></i> Profile</a>
-                    <a class="dropdown-item" href="account-wishlist.html"><i class="fa fa-fw fa-heart"></i> Wishlist (3)</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#"><i class="fa fa-fw fa-sign-out"></i> Logout</a>
-                  </div>
-                </div>
-              </div>
-              <a href="account-wishlist.html" class="d-none d-xl-block pos-r mr-3"><img src="{{ asset('men/images/wishlist.png')}}" alt="" width="31"><span class="badge badge-counter badge-theme">3</span></a>
 
               <a href="cart.html" class="d-lg-none pos-r"><img src="{{ asset('men/images/cart.png')}}" alt="" width="31">
                 @if(Cart::instance('default')->count() > 0)
@@ -168,46 +147,6 @@
                     <span class="badge badge-counter badge-theme">{{ Cart::instance('default')->count() }}</span>
                     @endif
                   </a>
-                  <div class="dropdown-menu dropdown-menu-right dropdown-menu-cart smooth" aria-labelledby="dropdown-cart">
-                    <div class="media">
-                      <a href="detail.html"><img class="img-thumbnail d-flex mr-2" src="{{ asset('men/images/product/polo1-small.jpg')}}" alt="product" width="50"></a>
-                      <div class="media-body">
-                        <div><a href="detail.html" class="mt-0 text-default">U.S. Polo Assn. Green Solid Slim Fit</a></div>
-                        <span class="price font-weight-normal">$13.50</span> <a href="#" class="float-right" data-toggle="tooltip" title="Remove"><span class="badge badge-light"><i class="fa fa-remove"></i></span></a>
-                      </div>
-                    </div>
-                    <div class="media">
-                      <a href="detail.html"><img class="img-thumbnail d-flex mr-2" src="{{ asset('men/images/product/polo2-small.jpg')}}" alt="product" width="50"></a>
-                      <div class="media-body">
-                        <div><a href="detail.html" class="mt-0 text-default">U.S. Polo Assn. Red Solid Slim Fit</a></div>
-                        <span class="price font-weight-normal">$13.50</span> <a href="#" class="float-right" data-toggle="tooltip" title="Remove"><span class="badge badge-light"><i class="fa fa-remove"></i></span></a>
-                      </div>
-                    </div>
-                    <div class="media">
-                      <a href="detail.html"><img class="img-thumbnail d-flex mr-2" src="{{ asset('men/images/product/polo3-small.jpg')}}" alt="product" width="50"></a>
-                      <div class="media-body">
-                        <div><a href="detail.html" class="mt-0 text-default">U.S. Polo Assn. Yellow Solid</a></div>
-                        <span class="price font-weight-normal">$13.50</span> <a href="#" class="float-right" data-toggle="tooltip" title="Remove"><span class="badge badge-light"><i class="fa fa-remove"></i></span></a>
-                      </div>
-                    </div>
-                    <div class="media">
-                      <a href="detail.html"><img class="img-thumbnail d-flex mr-2" src="{{ asset('men/images/product/polo4-small.jpg')}}" alt="product" width="50"></a>
-                      <div class="media-body">
-                        <div><a href="detail.html" class="mt-0 text-default">Red Tape Blue Solid Slim Fit</a></div>
-                        <span class="price font-weight-normal">$13.50</span> <a href="#" class="float-right" data-toggle="tooltip" title="Remove"><span class="badge badge-light"><i class="fa fa-remove"></i></span></a>
-                      </div>
-                    </div>
-                    <div class="dropdown-divider"></div>
-                    Subtotal: <span class="price">$54.00</span>
-                    <div class="dropdown-divider"></div>
-                    <div class="text-center">
-                      <div class="btn-group btn-group-sm" role="group" aria-label="View Cart and Checkout Button">
-                        <a href="/cart" role="button" class="btn btn-outline-theme"><i class="fa fa-shopping-cart"></i> View Cart</a>
-                        <a href="/checkout" role="button" class="btn btn-outline-theme"><i class="fa fa-check"></i> Checkout</a>
-                      </div>
-                    </div>
-                    <div class="dropdown-divider"></div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -232,34 +171,9 @@
                   Pages
                 </a>
                 <div class="dropdown-menu t-90 smooth" aria-labelledby="navbarDropdownMenuLink">
-                  <a class="dropdown-item" href="about.html">About Us</a>
-                  <a class="dropdown-item" href="blog.html">Blog</a>
-                  <a class="dropdown-item" href="blog-detail.html">Blog Detail</a>
-                  <a class="dropdown-item" href="compare.html">Compare</a>
-                  <a class="dropdown-item" href="contact.html">Contact Us</a>
-                  <a class="dropdown-item" href="cart-empty.html">Empty Shopping Cart</a>
-                  <a class="dropdown-item" href="404.html">Error 404</a>
-                  <a class="dropdown-item" href="faq.html">FAQ</a>
-                  <a class="dropdown-item" href="login.html">Login</a>
-                  <a class="dropdown-item" href="detail.html">Product Detail</a>
-                  <a class="dropdown-item" href="register.html">Register</a>
-                  <div class="dropdown-submenu">
-                    <a href="#" class="dropdown-item">My Account</a>
-                    <ul class="dropdown-menu smooth">
-                      <a href="account-order.html" class="dropdown-item">Orders</a>
-                      <a href="account-profile.html" class="dropdown-item">Profile</a>
-                      <a href="account-address.html" class="dropdown-item">Addresses</a>
-                      <a href="account-wishlist.html" class="dropdown-item">Wishlist</a>
-                      <a href="account-password.html" class="dropdown-item">Change Password</a>
-                      <div class="dropdown-submenu">
-                        <a href="#" class="dropdown-item">Submenu</a>
-                        <ul class="dropdown-menu smooth">
-                          <a href="#" class="dropdown-item">Submenu1</a>
-                          <a href="#" class="dropdown-item">Submenu2</a>
-                        </ul>
-                      </div>
-                    </ul>
-                  </div>
+                  <a class="dropdown-item" href="{{ route('about') }}">About Us</a>
+                  <a class="dropdown-item" href="{{ route('blog') }}">Blog</a>
+                  <a class="dropdown-item" href="/contact">Contact Us</a>
                 </div>
               </li>
               <li class="nav-item dropdown mega-menu">
@@ -271,60 +185,19 @@
                     <div class="row">
                       <div class="col">
                         <h6 class="p-2 font-weight-bold border border-top-0 border-right-0 border-left-0">Top Categories</h6>
+                         @foreach($categories as $category)
                         <div class="list-group">
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Polo T-Shirt</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Round Neck T-Shirt</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">V Neck T-Shirt</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Hooded T-Shirt</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Polo T-Shirt</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Round Neck T-Shirt</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">V Neck T-Shirt</a>
+                          <a href="{{ route('product.index', ['category' => $category->slug]) }}" class="list-group-item list-group-item-action py-1 px-3 border-0">{{ $category->name }}</a>
                         </div>
+                          @endforeach
                       </div>
                       <div class="col">
                         <h6 class="p-2 font-weight-bold border border-top-0 border-right-0 border-left-0">Categories</h6>
+                        @foreach($slug as $category)
                         <div class="list-group">
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Dresses</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Tops</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Bottoms</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Jackets / Coats</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Sweaters</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Gym Wear</a>
-                          <a href="products.html" class="list-group-item list-group-item-action py-1 px-3 border-0">Others</a>
+                          <a class="list-group-item list-group-item-action py-1 px-3 border-0">{{ $category->slug }}</a>
                         </div>
-                      </div>
-                      <div class="col">
-                        <div class="row">
-                          <div class="col-12 mb-2">
-                            <div class="card overlay-thumbnail">
-                              <img src="{{ asset('men/images/product/type-polo.jpg')}}" alt="" class="card-img">
-                              <a href="products.html">
-                                <div class="card-img-overlay d-flex justify-content-center align-items-center">
-                                  <div class="card-text">
-                                    <div>Polo T-Shirts <br/><small>40% OFF</small></div>
-                                    <button class="btn btn-sm btn-info rounded"><small>SHOP NOW</small></button>
-                                  </div>
-                                </div>
-                              </a>
-                            </div>
-                          </div>
-                          <div class="col-12">
-                            <div class="card overlay-thumbnail">
-                              <img src="{{ asset('men/images/product/type-hooded.jpg')}}" alt="" class="card-img">
-                              <a href="products.html">
-                                <div class="card-img-overlay d-flex justify-content-center align-items-center">
-                                  <div class="card-text">
-                                    <div>New Collection</div>
-                                    <button class="btn btn-sm btn-warning rounded"><small>SHOP NOW</small></button>
-                                  </div>
-                                </div>
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col">
-                        <a href="#"><img class="img-thumbnail" src="{{ asset('men/images/product/mega-menu.jpg')}}" alt=""></a>
+                        @endforeach
                       </div>
                     </div>
                   </div>
@@ -356,22 +229,13 @@
                 </li>
               </ul>
             </div>
-            <div class="col-lg-3 col-md-6">
-              <div class="title-footer"><span>Information</span></div>
-              <ul>
-                <li><i class="fa fa-angle-double-right"></i> <a href="faq.html">FAQ</a></li>
-                <li><i class="fa fa-angle-double-right"></i> <a href="#">Policy Privacy</a></li>
-                <li><i class="fa fa-angle-double-right"></i> <a href="#">Terms and Conditions</a></li>
-                <li><i class="fa fa-angle-double-right"></i> <a href="#">Shipping Methods</a></li>
-              </ul>
-            </div>
+            
             <div class="col-lg-3 col-md-6">
               <div class="title-footer"><span>Categories</span></div>
               <ul>
-                <li><i class="fa fa-angle-double-right"></i> <a href="products.html">Cras justo odio</a></li>
-                <li><i class="fa fa-angle-double-right"></i> <a href="products.html">Dapibus ac facilisis in</a></li>
-                <li><i class="fa fa-angle-double-right"></i> <a href="products.html">Morbi leo risus</a></li>
-                <li><i class="fa fa-angle-double-right"></i> <a href="products.html">Porta ac consectetur ac</a></li>
+                @foreach($categories as $category)
+                <li><i class="fa fa-angle-double-right"></i> <a href="{{ route('product.index', ['category' => $category->slug]) }}">{{ $category->name }}</a></li>
+                @endforeach
               </ul>
             </div>
             <div class="col-lg-3 col-md-6">
@@ -389,20 +253,18 @@
             <div class="col-lg-3 col-md-6">
               <div class="title-footer"><span>Our Store</span></div>
               <ul class="footer-icon">
-                <li><span><i class="fa fa-map-marker"></i></span> 212 Lorem Ipsum. Dolor Sit</li>
-                <li><span><i class="fa fa-phone"></i></span> +123-456-789</li>
-                <li><span><i class="fa fa-envelope"></i></span> <a href="mailto:cs@domain.tld">cs@domain.tld</a></li>
+                <li><span><i class="fa fa-map-marker"></i></span> {{ $settings->address }}</li>
+                <li><span><i class="fa fa-phone"></i></span> {{ $settings->phone }}</li>
+                <li><span><i class="fa fa-envelope"></i></span> <a href="mailto:cs@domain.tld">{{ $settings->email }}</a></li>
               </ul>
             </div>
             <div class="col-lg-3 col-md-6">
               <div class="title-footer"><span>Follow Us</span></div>
               <p class="mb-0">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum</p>
               <ul class="follow-us">
-                <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                <li><a href="#"><i class="fa fa-twitter"></i></a></li>
-                <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                <li><a href="#"><i class="fa fa-instagram"></i></a></li>
-                <li><a href="#"><i class="fa fa-rss"></i></a></li>
+                <li><a href="{{ $settings->facebook }}"><i class="fa fa-facebook"></i></a></li>
+                <li><a href="{{ $settings->twitter }}"><i class="fa fa-twitter"></i></a></li>
+                <li><a href="{{ $settings->instagram }}"><i class="fa fa-instagram"></i></a></li>
               </ul>
             </div>
             <div class="col-lg-3 col-md-6">
@@ -414,116 +276,10 @@
               <img src="images/payment-4.png')}}" alt="Payment-4">
               <img src="{{ asset('men/images/payment-5.png')}}" alt="Payment-5">
             </div>
-            <div class="col-lg-3 col-md-6">
-              <div class="title-footer"><span>My Account</span></div>
-                <ul>
-                  <li><i class="fa fa-angle-double-right"></i> <a href="account-order.html">Orders</a></li>
-                  <li><i class="fa fa-angle-double-right"></i> <a href="account-profile.html">Profile</a></li>
-                  <li><i class="fa fa-angle-double-right"></i> <a href="account-wishlist.html">Wishlist</a></li>
-                  <li><i class="fa fa-angle-double-right"></i> <a href="#">Logout</a></li>
-                </ul>
-            </div>
           </div>
         </div>
         <div class="text-center copyright">
-          Copyright © 2017 Mimity All right reserved
-        </div>
-      </div>
-
-      <!-- Quick View Modal -->
-      <div class="modal fade" id="QuickViewModal" tabindex="-1" role="dialog" aria-labelledby="QuickViewModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-quickview" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title"><a href="detail.html" class="text-default">U.S. Polo Assn. Green Solid Slim Fit</a></h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col col-sm-6">
-                    <div class="owl-carousel owl-theme quickview-slider">
-                      <div><img src="{{ asset('men/images/product/polo1.jpg')}}" alt="image"></div>
-                      <div><img src="{{ asset('men/images/product/polo2.jpg')}}" alt="image"></div>
-                      <div><img src="{{ asset('men/images/product/polo3.jpg')}}" alt="image"></div>
-                    </div>
-                  </div>
-                  <div class="col col-sm-6">
-                    <table class="table">
-                      <tbody>
-                        <tr>
-                          <td class="border-top-0">Price</td>
-                          <td class="border-top-0">
-                            <ul class="list-inline mb-0">
-                              <li class="list-inline-item"><span class="price">$13.50</span></li>
-                              <li class="list-inline-item"><del class="text-muted">$15.00</del></li>
-                              <li class="list-inline-item d-none d-sm-inline-block"><span class="badge custom-badge arrowed-left badge-primary">-10%</span></li>
-                            </ul>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Quantity</td>
-                          <td>
-                            <div class="input-group input-group-sm input-group-qty">
-                              <div class="input-group-prepend">
-                                <button class="btn btn-theme btn-down" type="button"><i class="fa fa-minus"></i></button>
-                              </div>
-                              <input type="text" class="form-control" aria-label="Quantity" value="1" data-min="1" data-max="10">
-                              <div class="input-group-append">
-                                <button class="btn btn-theme btn-up" type="button"><i class="fa fa-plus"></i></button>
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Size</td>
-                          <td>
-                            <select class="select-dropdown" data-width="65px" data-size="sm">
-                              <option value="S">S</option>
-                              <option value="M">M</option>
-                              <option value="L">L</option>
-                              <option value="XL">XL</option>
-                              <option value="XXL">XXL</option>
-                            </select>
-                          </td>
-                        </tr>
-                        <tr class="d-none d-md-table-row">
-                          <td>Checkbox</td>
-                          <td>
-                            <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" id="quickviewCheck">
-                              <label class="custom-control-label" for="quickviewCheck">Check this</label>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr class="d-none d-md-table-row">
-                          <td class="align-middle">Radio Option</td>
-                          <td>
-                            <div class="custom-control custom-radio">
-                              <input type="radio" id="quickviewOption1" name="quickview-option" class="custom-control-input">
-                              <label class="custom-control-label" for="quickviewOption1">Yes</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                              <input type="radio" id="quickviewOption2" name="quickview-option" class="custom-control-input">
-                              <label class="custom-control-label" for="quickviewOption2">No</label>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2">
-                            <button class="btn btn-sm btn-theme btn-block btn-add-quickview">Add to Cart</button>
-                            <button class="btn btn-sm btn-outline-theme"><i class="fa fa-heart"></i></button>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          Copyright © 2018 Quatess All right reserved
         </div>
       </div>
 

@@ -44,6 +44,9 @@
                     <a href="{{ route('password.request') }}" class="float-right text-default"><small>Forgot Password ?</small></a>
                   </div>
                 </form>
+                <a href="{{ route('guessCheckout.index')}}" style="color: white;">
+                <button type="submit" class="btn btn-theme btn-sm btn-block my-3">Continue Guess</button>
+              </a>
               </div>
             </div>
           </div>

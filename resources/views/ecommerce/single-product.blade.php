@@ -13,6 +13,25 @@
         </div>
       </div>
 
+      <!-- This part yere returns the success Message if product was added to the cart -->
+                @if(session()->has('success_message'))
+                 <div class="alert alert-success">
+                  {{ session()->get('success_message')}}
+                 </div>
+                 @endif
+
+                 @if(count($errors) > 0)
+                   <div class="alert alert-danger">
+                     <ul>
+                       @foreach($errors->all() as $error)
+                          <li>{{ $error }}</li>
+                       @endforeach
+                     </ul>
+                   </div>
+                 @endif  
+              <!-- End Of Success Message -->
+              
+
             <!-- Main Container -->
       <div class="container">
         <div class="row">
@@ -48,7 +67,6 @@
                   <td>
                     <ul class="list-inline mb-0">
                       <li class="list-inline-item"><span class="price"><h5 class="mb-0">{{ $product->presentPrice() }}</h5></span></li>
-                      <li class="list-inline-item"><del class="text-muted">$15.00</del></li>
                       <li class="list-inline-item d-none d-sm-inline-block"><span class="badge custom-badge arrowed-left badge-primary">-10%</span></li>
                     </ul>
                   </td>
@@ -59,20 +77,7 @@
                     <span class="badge badge-success custom-badge arrowed-left">In Stock</span>
                   </td>
                 </tr>
-                <tr>
-                  <td>Quantity</td>
-                  <td>
-                    <div class="input-group input-group-sm input-group-qty">
-                      <div class="input-group-prepend">
-                        <button class="btn btn-outline-theme btn-down" type="button"><i class="fa fa-minus"></i></button>
-                      </div>
-                      <input type="text" class="form-control" aria-label="Quantity" value="1" data-min="1" data-max="10">
-                      <div class="input-group-append">
-                        <button class="btn btn-outline-theme btn-up" type="button"><i class="fa fa-plus"></i></button>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
+
                 <tr>
                   <td>Size</td>
                   <td>
